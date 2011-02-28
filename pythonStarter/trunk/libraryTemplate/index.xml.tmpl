@@ -1,14 +1,20 @@
 #import paths
 <library>
     #def recursion($root)
-        <template path="org/umlfri/api/__init__.py.tmpl" output="$paths.getPath($root)/__init__.py" root="$root.fqn"/>
-        
-        #for $element in $root.childrenOfType('Namespace')
-            $recursion($element)
+        #for $element in $root.children
+            #if $element.typeName == 'Namespace'
+                <template path="__init__.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
+                
+                $recursion($element)
+            #elif $element.typeName == 'Interface'
+                <template path="interface.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
+            #end if
         #end for
     #end def
     
-    #for $element in $root.childrenOfType('Namespace')
-        $recursion($element)
-    #end for
+    $recursion($root)
+    
+    <file path="implementation/__init__.py" output="org/umlfri/api/implementation/__init__.py"/>
+    <file path="implementation/message.py" output="org/umlfri/api/implementation/message.py"/>
+    <file path="implementation/advProperty.py" output="org/umlfri/api/implementation/advProperty.py"/>
 </library>
