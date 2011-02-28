@@ -1,0 +1,2 @@
+class AdvProperty(object):
+    pass

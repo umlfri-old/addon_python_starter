@@ -1,0 +1,19 @@
+#import paths
+from ..implementation import Message
+from ..implementation import AdvProperty
+#if $root.base
+from $paths.getImportPath($root.base, $root) import $root.base.identifier.upperCamelCase
+#end if
+
+class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifier.upperCamelCase else 'object' #):
+    def __init__(self, id):
+        self.__id = id
+#for $method in $root.childrenOfType('InterfaceMethod')
+    
+    def ${method.identifier.lowerUnderscoreSeparated}(self#slurp
+#for $parameter in $method.childrenOfType('InterfaceMethodParameter')
+, $parameter.identifier.lowerUnderscoreSeparated#slurp
+#end for
+):
+        pass
+#end for
