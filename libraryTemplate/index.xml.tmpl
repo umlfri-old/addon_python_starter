@@ -1,6 +1,14 @@
+#import paths
 <library>
-    <file path="org/__init__.py" output="org/__init__.py" />
-    <file path="org/umlfri/__init__.py" output="org/umlfri/__init__.py" />
-    <file path="org/umlfri/api/__init__.py" output="org/umlfri/api/__init__.py" />
-    <file path="org/umlfri/api/base/__init__.py" output="org/umlfri/api/base/__init__.py" />
+    #def recursion($root)
+        <template path="org/umlfri/api/__init__.py.tmpl" output="$paths.getPath($root)/__init__.py" root="$root.fqn"/>
+        
+        #for $element in $root.childrenOfType('Namespace')
+            $recursion($element)
+        #end for
+    #end def
+    
+    #for $element in $root.childrenOfType('Namespace')
+        $recursion($element)
+    #end for
 </library>
