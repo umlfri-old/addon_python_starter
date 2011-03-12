@@ -1,9 +1,11 @@
 #import paths
 from ..implementation import Message
 from ..implementation import AdvProperty
-#if $root.base
-from $paths.getImportPath($root.base, $root) import $root.base.identifier.upperCamelCase
+#for $depend in $root.referenced
+#if $depend.typeName == 'Interface' or $depend.typeName == 'Exception'
+from $paths.getImportPath($depend, $root) import $depend.identifier.upperCamelCase
 #end if
+#end for
 
 #def createMethod($method, $includeDoc = False)
     def ${method.identifier.lowerUnderscoreSeparated}(self#slurp
