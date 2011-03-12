@@ -1,2 +1,3 @@
 class AdvProperty(object):
-    pass
+    def __init__(self, name, haveIndex, documentation):
+        pass

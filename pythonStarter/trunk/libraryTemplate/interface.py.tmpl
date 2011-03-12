@@ -5,15 +5,49 @@ from ..implementation import AdvProperty
 from $paths.getImportPath($root.base, $root) import $root.base.identifier.upperCamelCase
 #end if
 
-class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifier.upperCamelCase else 'object' #):
-    def __init__(self, id):
-        self.__id = id
-#for $method in $root.childrenOfType('InterfaceMethod')
-    
+#def createMethod($method, $includeDoc = False)
     def ${method.identifier.lowerUnderscoreSeparated}(self#slurp
 #for $parameter in $method.childrenOfType('InterfaceMethodParameter')
 , $parameter.identifier.lowerUnderscoreSeparated#slurp
 #end for
 ):
+#if $method.documentation and $includeDoc
+        """
+        $method.documentation.indent(8)
+        """
+#end if
         pass
+#end def
+
+class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifier.upperCamelCase else 'object' #):
+#if $root.documentation
+    """
+    $root.documentation.indent(4)
+    """
+    
+#end if
+    def __init__(self, id):
+        self.__id = id
+#for $method in $root.childrenOfType('InterfaceMethod')
+    
+$createMethod($method, True)
+#end for
+#for $property in $root.childrenOfType('InterfaceProperty')
+
+    $property.name = AdvProperty('$property.name', #if $property.index then 'True' else 'False' #, $property.documentation.__repr__())
+#for $method in $property.childrenOfType('InterfacePropertyGetter')
+    
+    @${property.name}.getter
+$createMethod($method.createMethod())
+#end for
+#for $method in $property.childrenOfType('InterfacePropertySetter')
+    
+    @${property.name}.setter
+$createMethod($method.createMethod())
+#end for
+#for $method in $property.childrenOfType('InterfacePropertyIterator')
+    
+    @${property.name}.indexer
+$createMethod($method.createMethod())
+#end for
 #end for
