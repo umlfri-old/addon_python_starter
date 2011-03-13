@@ -2,15 +2,22 @@
 from ..implementation import Message
 from ..implementation import AdvProperty
 #for $depend in $root.referenced
-#if $depend.typeName == 'Interface' or $depend.typeName == 'Exception'
+#if $depend.typeName == 'Exception'
 from $paths.getImportPath($depend, $root) import $depend.identifier.upperCamelCase
 #end if
 #end for
+#if $root.base
+from $paths.getImportPath($root.base, $root) import $root.base.identifier.upperCamelCase
+#end if
 
 #def createMethod($method, $includeDoc = False)
     def ${method.identifier.lowerUnderscoreSeparated}(self#slurp
 #for $parameter in $method.childrenOfType('InterfaceMethodParameter')
+#if $parameter.type == '*'
+, *$parameter.identifier.lowerUnderscoreSeparated#slurp
+#else
 , $parameter.identifier.lowerUnderscoreSeparated#slurp
+#end if
 #end for
 ):
 #if $method.documentation and $includeDoc
@@ -18,9 +25,31 @@ from $paths.getImportPath($depend, $root) import $depend.identifier.upperCamelCa
         $method.documentation.indent(8)
         """
 #end if
-        pass
+#if $method.returnType
+        return \
+#end if
+            Message(self.__id, '$method.apiName') \
+#for $parameter in $method.parameters
+#if $parameter.type == '*'
+                .args_parameter('$parameter.apiName', $parameter.identifier.lowerUnderscoreSeparated) \
+#else if $parameter.type.typeName == 'PrimitiveType'
+                .${parameter.type.name}_parameter('$parameter.apiName', $parameter.identifier.lowerUnderscoreSeparated) \
+#else
+                .object_parameter('$parameter.apiName', $parameter.identifier.lowerUnderscoreSeparated) \
+#end if
+#end for
+                .send() \
+#for $exception in $method.throws
+                .throws_exception($exception.exception.number, $exception.exception.identifier.upperCamelCase) \
+#end for
+#if not $method.returnType
+                .return_void()
+#else if $method.returnType.type.typeName == 'PrimitiveType'
+                .return_${method.returnType.type.name}()
+#else
+                .return_object()
+#end if
 #end def
-
 class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifier.upperCamelCase else 'object' #):
 #if $root.documentation
     """
@@ -35,7 +64,6 @@ class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifie
 $createMethod($method, True)
 #end for
 #for $property in $root.childrenOfType('InterfaceProperty')
-
     $property.name = AdvProperty('$property.name', #if $property.index then 'True' else 'False' #, $property.documentation.__repr__())
 #for $method in $property.childrenOfType('InterfacePropertyGetter')
     
