@@ -44,6 +44,10 @@ from $paths.getImportPath($root.base, $root) import $root.base.identifier.upperC
 #end for
 #if not $method.returnType
                 .return_void()
+#else if $method.returnType.iterable and $method.returnType.type.typeName == 'PrimitiveType'
+                .iterate_${method.returnType.type.name}()
+#else if $method.returnType.iterable
+                .iterate_object()
 #else if $method.returnType.type.typeName == 'PrimitiveType'
                 .return_${method.returnType.type.name}()
 #else
