@@ -3,11 +3,13 @@
     #def recursion($root)
         #for $element in $root.children
             #if $element.typeName == 'Namespace'
-                <template path="__init__.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
+                <template path="templates/__init__.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
                 
                 $recursion($element)
             #elif $element.typeName == 'Interface'
-                <template path="interface.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
+                <template path="templates/interface.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
+            #elif $element.typeName == 'Exception'
+                <template path="templates/exception.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
             #end if
         #end for
     #end def

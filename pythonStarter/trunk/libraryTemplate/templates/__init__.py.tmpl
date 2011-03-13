@@ -1,0 +1,6 @@
+#import paths
+#for $type in $root.children
+#if $type.typeName == 'Interface' or $type.typeName == 'Exception'
+from .$type.identifier.lowerCamelCase import $type.identifier.upperCamelCase
+#end if
+#end for
