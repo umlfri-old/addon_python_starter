@@ -1,0 +1,19 @@
+#import paths
+#for $element in $root.descendants
+#if $element.typeName == 'Interface' and not $element.isAbstract
+from ..${element.namespace.identifier.lowerCamelCase}.${element.identifier.lowerCamelCase} import ${element.identifier.upperCamelCase}
+#end if
+#end for
+
+class Factory(object):
+    def __init__(self):
+        self.__types = {
+#for $element in $root.descendants
+#if $element.typeName == 'Interface' and not $element.isAbstract
+            '${element.apiName}': ${element.identifier.upperCamelCase},
+#end if
+#end for
+        }
+    
+    def create_instance(self, type, id):
+        return self.__types[type](id)
