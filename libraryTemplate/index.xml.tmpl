@@ -1,21 +1,16 @@
 #import paths
 <library>
-    #def recursion($root)
-        #for $element in $root.children
-            #if $element.typeName == 'Namespace'
-                <template path="templates/__init__.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
-                
-                $recursion($element)
-            #elif $element.typeName == 'Interface'
-                <template path="templates/interface.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
-            #elif $element.typeName == 'Exception'
-                <template path="templates/exception.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
-            #end if
-        #end for
-    #end def
+    #for $element in $root.descendants
+        #if $element.typeName == 'Namespace'
+            <template path="templates/__init__.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
+        #elif $element.typeName == 'Interface'
+            <template path="templates/interface.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
+        #elif $element.typeName == 'Exception'
+            <template path="templates/exception.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
+        #end if
+    #end for
     
-    $recursion($root)
-    
+    <template path="templates/factory.py.tmpl" output="org/umlfri/api/implementation/factory.py" root="$root.fqn"/>
     <file path="implementation/__init__.py" output="org/umlfri/api/implementation/__init__.py"/>
     <file path="implementation/message.py" output="org/umlfri/api/implementation/message.py"/>
     <file path="implementation/advProperty.py" output="org/umlfri/api/implementation/advProperty.py"/>

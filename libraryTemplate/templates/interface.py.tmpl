@@ -25,9 +25,7 @@ from $paths.getImportPath($root.base, $root) import $root.base.identifier.upperC
         $method.documentation.indent(8)
         """
 #end if
-#if $method.returnType
         return \
-#end if
             Message(self.__id, '$method.apiName') \
 #for $parameter in $method.parameters
 #if $parameter.type == '*'
@@ -43,15 +41,15 @@ from $paths.getImportPath($root.base, $root) import $root.base.identifier.upperC
                 .throws_exception($exception.exception.number, $exception.exception.identifier.upperCamelCase) \
 #end for
 #if not $method.returnType
-                .return_void()
+                .return_void()#slurp
 #else if $method.returnType.iterable and $method.returnType.type.typeName == 'PrimitiveType'
-                .iterate_${method.returnType.type.name}()
+                .iterate_${method.returnType.type.name}()#slurp
 #else if $method.returnType.iterable
-                .iterate_object()
+                .iterate_object()#slurp
 #else if $method.returnType.type.typeName == 'PrimitiveType'
-                .return_${method.returnType.type.name}()
+                .return_${method.returnType.type.name}()#slurp
 #else
-                .return_object()
+                .return_object()#slurp
 #end if
 #end def
 class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifier.upperCamelCase else 'object' #):
@@ -62,12 +60,16 @@ class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifie
     
 #end if
     def __init__(self, id):
+#if $root.base
+        ${root.base.identifier.upperCamelCase}.__init__(self, id)
+#end if
         self.__id = id
 #for $method in $root.childrenOfType('InterfaceMethod')
     
 $createMethod($method, True)
 #end for
 #for $property in $root.childrenOfType('InterfaceProperty')
+    
     $property.name = AdvProperty('$property.name', #if $property.index then 'True' else 'False' #, $property.documentation.__repr__())
 #for $method in $property.childrenOfType('InterfacePropertyGetter')
     
