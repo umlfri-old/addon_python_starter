@@ -64,6 +64,14 @@ class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifie
         ${root.base.identifier.upperCamelCase}.__init__(self, id)
 #end if
         self.__id = id
+    
+    @property
+    def __interface__(self):
+        return "$root.apiName"
+    
+    @property
+    def __id__(self):
+        return self.__id
 #for $method in $root.childrenOfType('InterfaceMethod')
     
 $createMethod($method, True)
@@ -87,3 +95,8 @@ $createMethod($method.createMethod())
 $createMethod($method.createMethod())
 #end for
 #end for
+#if $root.fqn == 'org::umlfri::api::base::Adapter':
+#include "appends/adapter.py.tmpl"
+#elif $root.fqn == 'org::umlfri::api::base::Transaction':
+#include "appends/transaction.py.tmpl"
+#end if
