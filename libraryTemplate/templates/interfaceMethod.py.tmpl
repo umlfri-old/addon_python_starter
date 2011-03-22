@@ -1,0 +1,44 @@
+    def ${method.identifier.lowerUnderscoreSeparated}(self#slurp
+#for $parameter in $method.childrenOfType('InterfaceMethodParameter')
+#if $parameter.type == '*'
+, *$parameter.identifier.lowerUnderscoreSeparated#slurp
+#else
+, $parameter.identifier.lowerUnderscoreSeparated#slurp
+#end if
+#end for
+):
+#if $method.documentation and $includeDoc
+        """
+        $method.documentation.indent(8)
+        """
+#end if
+        return \
+            Message(self.__id, '$method.apiName') \
+#for $parameter in $method.parameters
+#if $parameter.type == '*'
+                .args_parameter('$parameter.apiName', $parameter.identifier.lowerUnderscoreSeparated) \
+#else if $parameter.type.typeName == 'PrimitiveType'
+                .${parameter.type.name}_parameter('$parameter.apiName', $parameter.identifier.lowerUnderscoreSeparated) \
+#else
+                .object_parameter('$parameter.apiName', $parameter.identifier.lowerUnderscoreSeparated) \
+#end if
+#end for
+#if $method.async
+                .send_async()
+#else
+                .send() \
+#for $exception in $method.throws
+                .throws_exception($exception.exception.number, $exception.exception.identifier.upperCamelCase) \
+#end for
+#if not $method.returnType
+                .return_void()#slurp
+#else if $method.returnType.iterable and $method.returnType.type.typeName == 'PrimitiveType'
+                .iterate_${method.returnType.type.name}()#slurp
+#else if $method.returnType.iterable
+                .iterate_object()#slurp
+#else if $method.returnType.type.typeName == 'PrimitiveType'
+                .return_${method.returnType.type.name}()#slurp
+#else
+                .return_object()#slurp
+#end if
+#end if
