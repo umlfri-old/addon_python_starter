@@ -38,10 +38,13 @@ class Server(object):
         thread.start_new_thread(self.__serve, ())
             
     def set_main_loop(self, main_loop):
-        if self.__mainLoop.in_main_loop():
+        if self.__mainLoop.in_main_loop:
             raise Exception("Cannot change main loop while plugin is running")
         self.__mainLoop = main_loop
     
+    def main_loop(self):
+        self.__mainLoop.main_loop()
+            
     def send_command(self, message, async = False):
         with self.__messageLock:
             self.__messagesId += 1
