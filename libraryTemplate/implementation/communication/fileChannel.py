@@ -10,6 +10,7 @@ class FileChannel(object):
             raise ValueError("I/O operation on closed file")
         
         self.__output.write(data + '\r\n')
+        self.__output.flush()
     
     def read_line(self):
         if self.__closed:

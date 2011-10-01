@@ -4,6 +4,9 @@
 , *$parameter.identifier.lowerUnderscoreSeparated#slurp
 #else
 , $parameter.identifier.lowerUnderscoreSeparated#slurp
+#if not $parameter.required
+ = $parameter.default.__repr__()#slurp
+#end if
 #end if
 #end for
 ):
