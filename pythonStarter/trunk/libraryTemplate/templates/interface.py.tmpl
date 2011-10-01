@@ -54,7 +54,7 @@ $createMethod($method.createMethod())
 #end for
 #for $method in $property.childrenOfType('InterfacePropertyIterator')
     
-    @${property.name}.indexer
+    @${property.name}.iterator
 $createMethod($method.createMethod())
 #end for
 #end for
