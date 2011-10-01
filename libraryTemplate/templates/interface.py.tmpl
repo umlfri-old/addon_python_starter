@@ -42,20 +42,20 @@ $createMethod($method, True)
 #end for
 #for $property in $root.childrenOfType('InterfaceProperty')
     
-    $property.name = AdvProperty('$property.name', #if $property.index then 'True' else 'False' #, $property.documentation.__repr__())
+    $property.identifier.lowerUnderscoreSeparated = AdvProperty('$property.identifier.lowerUnderscoreSeparated', #if $property.index then 'True' else 'False' #, $property.documentation.__repr__())
 #for $method in $property.childrenOfType('InterfacePropertyGetter')
     
-    @${property.name}.getter
+    @${property.identifier.lowerUnderscoreSeparated}.getter
 $createMethod($method.createMethod())
 #end for
 #for $method in $property.childrenOfType('InterfacePropertySetter')
     
-    @${property.name}.setter
+    @${property.identifier.lowerUnderscoreSeparated}.setter
 $createMethod($method.createMethod())
 #end for
 #for $method in $property.childrenOfType('InterfacePropertyIterator')
     
-    @${property.name}.iterator
+    @${property.identifier.lowerUnderscoreSeparated}.iterator
 $createMethod($method.createMethod())
 #end for
 #end for

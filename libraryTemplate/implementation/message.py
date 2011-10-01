@@ -59,10 +59,10 @@ class Message(object):
         return MessageResult(*self.__result)
     
     def send_async(self):
-        Server.instance.send_command_async(self)
+        Server.instance.send_command(self, True)
     
     def create_message(self):
-        return 'exec', '%s.%s'%(self.__objId, self.__name), self.__params
+        return 'exec', '#%s.%s'%(self.__objId, self.__name), (), self.__params
     
     def accept(self, cmd, params):
         self.__result = cmd, params

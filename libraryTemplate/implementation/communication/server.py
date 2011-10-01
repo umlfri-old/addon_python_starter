@@ -1,30 +1,13 @@
 from ...mainLoops import DefaultMainLoop
-import thread
-from .consts import RESP_FINALIZE, RESP_CALLBACK, IDENTIFIER, VERSION, RESP_RESULT, RESP_OK
+from .consts import RESP_FINALIZE, RESP_CALLBACK, IDENTIFIER, VERSION, RESP_RESULT
 from .encoding import Encoding
 
+import thread
 from threading import Lock, Event
 
 class ClassProperty(property):
     def __get__(self, cls, owner):
         return self.fget.__get__(None, owner)()
-
-class StartupMessage(object):
-    def __init__(self):
-        self.__sendEvent = Event()
-        self.__allOk = False
-    
-    def create_message(self):
-        return 'plugin', 'init', {}
-    
-    def send(self):
-        Server.instance.send_command(self)
-        self.__sendEvent.wait()
-        if not self.__allOk:
-            raise Exception("Server was not initialized properly")
-    
-    def accept(self, cmd, params):
-        self.__allOk = cmd == RESP_OK
 
 class Server(object):
     __instance = None
@@ -53,26 +36,22 @@ class Server(object):
         self.__messagesId = 0
         
         thread.start_new_thread(self.__serve, ())
-        StartupMessage().send()
             
     def set_main_loop(self, main_loop):
         if self.__mainLoop.in_main_loop():
             raise Exception("Cannot change main loop while plugin is running")
         self.__mainLoop = main_loop
     
-    def send_command(self, message):
+    def send_command(self, message, async = False):
         with self.__messageLock:
             self.__messagesId += 1
             id = self.__messagesId
-            self.__messages[id] = message
-        self.send_command_async(message)
-    
-    def send_command_async(self, message):
-        with self.__messageLock:
-            cmd, uri, params = message.create_message()
+            if not async:
+                self.__messages[id] = message
+            cmd, uri, args, kwds = message.create_message()
             self.__channel.write_line('%s %s %s/%s'%(cmd, uri, IDENTIFIER, VERSION))
-            for name, value in params.iteritems():
-                self.__channel.write_line('%s: %s'%(name, self.__encoding.encode_to_string(value)))
+            self.__channel.write_line('args: %s'%self.__encoding.encode_many(args))
+            self.__channel.write_line('kwds: %s'%self.__encoding.encode_many(kwds))
             self.__channel.write_line('__id__: %d'%id)
             self.__channel.write_line()
             self.__channel.write_line()
@@ -84,21 +63,33 @@ class Server(object):
             if not line:
                 continue
             
-            ver, cmd = line.split()
+            firstRow = line.split()
             params = {}
             
-            while line != '':
-                name, value = line.split(':')
+            cmd = int(firstRow[1])
+            
+            while True:
+                line = self.__channel.read_line()
+                if line == '':
+                    break
+                
+                name, value = line.split(':', 1)
                 params[name] = value.strip()
             
-            for name in 'params', 'args', 'kwds', 'result':
-                if name in params:
-                    params[name] = self.__encoding.decode_from_string(params[name])
+            if 'args' in params:
+                params['args'] = self.__encoding.decode_many(params['args'])
+            if 'kwds' in params:
+                params['kwds'] = self.__encoding.decode_many(params['kwds'])
+            if 'result' in params:
+                params['result'] = self.__encoding.decode_one(params['result'])
+            if 'params' in params:
+                params['result'] = self.__encoding.decode_simple(params['params'])
             
             with self.__messageLock:
                 if '__id__' in params:
-                    id = params['__id__']
+                    id = int(params['__id__'])
                     del params['__id__']
+                    print id, self.__messages, id in self.__messages
                     if id in self.__messages:
                         msg = self.__messages[id]
                         del self.__messages[id]
