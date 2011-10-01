@@ -92,7 +92,6 @@ class Server(object):
                 if '__id__' in params:
                     id = int(params['__id__'])
                     del params['__id__']
-                    print id, self.__messages, id in self.__messages
                     if id in self.__messages:
                         msg = self.__messages[id]
                         del self.__messages[id]
