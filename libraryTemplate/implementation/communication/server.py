@@ -1,13 +1,30 @@
 from ...mainLoops import DefaultMainLoop
 import thread
-from .consts import RESP_FINALIZE, RESP_CALLBACK, IDENTIFIER, VERSION, RESP_RESULT
+from .consts import RESP_FINALIZE, RESP_CALLBACK, IDENTIFIER, VERSION, RESP_RESULT, RESP_OK
 from .encoding import Encoding
 
-from threading import Lock
+from threading import Lock, Event
 
 class ClassProperty(property):
     def __get__(self, cls, owner):
         return self.fget.__get__(None, owner)()
+
+class StartupMessage(object):
+    def __init__(self):
+        self.__sendEvent = Event()
+        self.__allOk = False
+    
+    def create_message(self):
+        return 'plugin', 'init', {}
+    
+    def send(self):
+        Server.instance.send_command(self)
+        self.__sendEvent.wait()
+        if not self.__allOk:
+            raise Exception("Server was not initialized properly")
+    
+    def accept(self, cmd, params):
+        self.__allOk = cmd == RESP_OK
 
 class Server(object):
     __instance = None
@@ -36,7 +53,7 @@ class Server(object):
         self.__messagesId = 0
         
         thread.start_new_thread(self.__serve, ())
-        #self.send_command()
+        StartupMessage().send()
             
     def set_main_loop(self, main_loop):
         if self.__mainLoop.in_main_loop():
@@ -96,7 +113,6 @@ class Server(object):
                 if cmd == RESP_RESULT:
                     cmd = None
                 msg.accept(cmd, params)
-                    
     
     def __accept(self, cmd, params):
         if cmd == RESP_FINALIZE:
