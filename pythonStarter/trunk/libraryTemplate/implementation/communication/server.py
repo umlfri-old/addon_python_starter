@@ -5,31 +5,12 @@ from .encoding import Encoding
 import thread
 from threading import Lock, Event
 
-class ClassProperty(property):
-    def __get__(self, cls, owner):
-        return self.fget.__get__(None, owner)()
-
 class Server(object):
-    __instance = None
-    
-    @ClassProperty
-    @classmethod
-    def instance(cls):
-        if cls.__instance is None:
-            raise Exception("Server instance not initialized!")
-        return cls.__instance
-    
-    @classmethod
-    def crate_instance(cls, channel):
-        if cls.__instance is not None:
-            raise Exception("Server instance already initialized!")
-        cls.__instance = Server(channel)
-    
     def __init__(self, channel):
         self.__channel = channel
         
         self.__mainLoop = DefaultMainLoop()
-        self.__encoding = Encoding()
+        self.__encoding = Encoding(self)
         
         self.__messageLock = Lock()
         self.__messages = {}

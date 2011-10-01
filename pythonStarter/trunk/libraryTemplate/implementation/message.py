@@ -1,6 +1,5 @@
 from threading import Event
 
-from .communication import Server
 from .messageResult import MessageResult
 
 class Message(object):
@@ -53,13 +52,13 @@ class Message(object):
         self.__params[name] = value
         return self
     
-    def send(self):
-        Server.instance.send_command(self)
+    def send(self, server):
+        server.send_command(self)
         self.__sendEvent.wait()
         return MessageResult(*self.__result)
     
-    def send_async(self):
-        Server.instance.send_command(self, True)
+    def send_async(self, server):
+        server.send_command(self, True)
     
     def create_message(self):
         return 'exec', '#%s.%s'%(self.__objId, self.__name), (), self.__params

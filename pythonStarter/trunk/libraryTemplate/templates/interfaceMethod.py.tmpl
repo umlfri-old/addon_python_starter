@@ -27,9 +27,9 @@
 #end if
 #end for
 #if $method.async
-                .send_async()
+                .send_async(self.__server)
 #else
-                .send() \
+                .send(self.__server) \
 #for $exception in $method.throws
                 .throws_exception($exception.exception.number, $exception.exception.identifier.upperCamelCase) \
 #end for

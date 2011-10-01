@@ -31,11 +31,11 @@ channel = FileChannel(fin, fout)
 if debugCommunication:
     channel = MIMChannel(channel)
 
-Server.crate_instance(channel)
-StartupMessage(uri).send()
+server = Server(channel)
+StartupMessage(uri).send(server)
 
 import plugin
 
-adapter=Adapter('adapter')
+adapter=Adapter(server, 'adapter')
 plugin.pluginMain(adapter)
-Server.instance.main_loop()
+server.main_loop()
