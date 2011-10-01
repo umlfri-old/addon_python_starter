@@ -1,6 +1,6 @@
 from ...mainLoops import DefaultMainLoop
 import thread
-from .consts import RESP_FINALIZE, RESP_CALLBACK, IDENTIFIER, VERSION
+from .consts import RESP_FINALIZE, RESP_CALLBACK, IDENTIFIER, VERSION, RESP_RESULT
 from .encoding import Encoding
 
 from threading import Lock
@@ -36,7 +36,7 @@ class Server(object):
         self.__messagesId = 0
         
         thread.start_new_thread(self.__serve, ())
-        self.command()
+        #self.send_command()
             
     def set_main_loop(self, main_loop):
         if self.__mainLoop.in_main_loop():
@@ -48,6 +48,10 @@ class Server(object):
             self.__messagesId += 1
             id = self.__messagesId
             self.__messages[id] = message
+        self.send_command_async(message)
+    
+    def send_command_async(self, message):
+        with self.__messageLock:
             cmd, uri, params = message.create_message()
             self.__channel.write_line('%s %s %s/%s'%(cmd, uri, IDENTIFIER, VERSION))
             for name, value in params.iteritems():
@@ -78,14 +82,19 @@ class Server(object):
                 if '__id__' in params:
                     id = params['__id__']
                     del params['__id__']
-                    msg = self.__messages[id]
-                    del self.__messages[id]
+                    if id in self.__messages:
+                        msg = self.__messages[id]
+                        del self.__messages[id]
+                    else:
+                        msg = None
                 else:
                     msg = None
             
             if msg is None:
                 self.__accept(cmd, params)
             else:
+                if cmd == RESP_RESULT:
+                    cmd = None
                 msg.accept(cmd, params)
                     
     
