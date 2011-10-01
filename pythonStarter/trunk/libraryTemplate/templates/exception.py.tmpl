@@ -23,3 +23,10 @@ class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifie
         return self.__params[$property.index]
 #end if
 #end for
+
+    @property
+    def traceback(self):
+        """
+        Traceback for the current exception
+        """
+        return self.__params[-1]
