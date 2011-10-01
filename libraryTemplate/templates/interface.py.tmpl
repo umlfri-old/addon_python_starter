@@ -23,10 +23,11 @@ class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifie
     """
     
 #end if
-    def __init__(self, id):
+    def __init__(self, server, id):
 #if $root.base
-        ${root.base.identifier.upperCamelCase}.__init__(self, id)
+        ${root.base.identifier.upperCamelCase}.__init__(self, server, id)
 #end if
+        self.__server = server
         self.__id = id
     
     @property

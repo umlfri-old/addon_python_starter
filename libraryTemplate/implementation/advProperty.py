@@ -49,6 +49,9 @@ class AdvProperty(object):
         return self
     
     def __get__(self, instance, cls = None):
+        if instance is None:
+            return self
+        
         if self.__hasIndex:
             return AdvPropertyIndexer(self.__name__, self.__doc__, instance, self.__getter, self.__setter, self.__iterator)
         elif self.__iterator is not None:

@@ -5,11 +5,11 @@ import threading
 from ..factory import Factory
 
 class Encoding(object):
-    def __init__(self):
+    def __init__(self, server):
         self.__callbacks = {}
         self.__callbackLock = threading.Lock()
         self.__callbackId = 0
-        self.__factory = Factory()
+        self.__factory = Factory(server)
     
     def encode(self, value):
         if isinstance(value, bool):
