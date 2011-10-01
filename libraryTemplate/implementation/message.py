@@ -27,7 +27,7 @@ class Message(object):
         return self
     
     def string_parameter(self, name, value):
-        if not isinstance(value, basestring):
+        if not isinstance(value, basestring) and value is not None:
             value = str(value)
         self.__params[name] = value
         return self
