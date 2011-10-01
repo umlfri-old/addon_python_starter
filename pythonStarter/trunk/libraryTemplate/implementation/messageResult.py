@@ -38,7 +38,7 @@ class MessageResult(object):
     
     def return_string(self):
         ret = self.__params['result']
-        if not isinstance(ret, basestring):
+        if not isinstance(ret, basestring) and ret is not None:
             ret = str(ret)
         return ret
     
@@ -81,7 +81,7 @@ class MessageResult(object):
     
     def iterate_string(self):
         for item in self.__params['result']:
-            if not isinstance(item, basestring):
+            if not isinstance(item, basestring) and item is not None:
                 item = str(item)
             yield item
     
