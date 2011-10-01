@@ -8,6 +8,7 @@ class MessageResult(object):
     def throws_exception(self, cmd, exception):
         if cmd == self.__cmd:
             raise exception(self.__params['params'])
+        return self
     
     def return_void(self):
         if self.__cmd is not None:

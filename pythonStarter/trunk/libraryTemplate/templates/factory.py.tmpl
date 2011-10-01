@@ -1,14 +1,15 @@
 from weakref import WeakValueDictionary
 
 #import paths
-#for $element in $root.descendants
-#if $element.typeName == 'Interface' and not $element.isAbstract
-from ..${element.namespace.identifier.lowerCamelCase}.${element.identifier.lowerCamelCase} import ${element.identifier.upperCamelCase}
-#end if
-#end for
 
 class Factory(object):
     def __init__(self):
+#for $element in $root.descendants
+#if $element.typeName == 'Interface' and not $element.isAbstract
+        from ..${element.namespace.identifier.lowerCamelCase}.${element.identifier.lowerCamelCase} import ${element.identifier.upperCamelCase}
+#end if
+#end for
+        
         self.__types = {
 #for $element in $root.descendants
 #if $element.typeName == 'Interface' and not $element.isAbstract

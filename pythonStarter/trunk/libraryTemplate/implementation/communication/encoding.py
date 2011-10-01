@@ -2,7 +2,7 @@ import ast
 import base64
 import threading
 
-from .factory import Factory
+from ..factory import Factory
 
 class Encoding(object):
     def __init__(self):
@@ -82,7 +82,7 @@ class Encoding(object):
         return True if value == 'True' else False
 
     def __decode_object(self, value):
-        id, type = value[:1].split('::')
+        id, type = value[1:].split('::')
         return self.__factory.get_instance(type, id)
 
     def __decode_string(self, value):
@@ -107,8 +107,31 @@ class Encoding(object):
     def __decode_eval(self, value):
         return ast.literal_eval(value)
     
-    def encode_to_string(self, value):
-        return repr(self.encode(value))
+    def encode_many(self, values):
+        if isinstance(values, dict):
+            ret = {}
+            for name, value in values.iteritems():
+                ret[name] = self.encode(value)
+            return repr(ret)
+        else:
+            ret = tuple(self.encode(value) for value in values)
+            return repr(ret)
     
-    def decode_from_string(self, value):
-        return self.decode(ast.literal_eval(value))
+    def decode_many(self, str):
+        values = ast.literal_eval(str)
+        
+        if isinstance(values, dict):
+            ret = {}
+            for name, value in values.iteritems():
+                ret[name] = self.decode(value)
+            return ret
+        else:
+            ret = tuple(self.decode(value) for value in values)
+            return ret
+    
+    def decode_one(self, str):
+        value = ast.literal_eval(str)
+        return self.decode(value)
+    
+    def decode_simple(self, str):
+        return ast.literal_eval(str)
