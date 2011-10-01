@@ -18,16 +18,23 @@ if 'UMLFRI_LIB' in os.environ:
 
 sys.path.insert(0, os.environ['UMLFRI_PATH'])
 
+debugCommunication = 'UMLFRI_PLUGIN_DEBUG' in os.environ
+
 from org.umlfri.api.implementation import Server, FileChannel, MIMChannel, StartupMessage
 from org.umlfri.api.base import Adapter
+
 fin = os.fdopen(pin, 'r')
 fout = os.fdopen(pout, 'w')
-Server.crate_instance(MIMChannel(FileChannel(fin, fout)))
+
+channel = FileChannel(fin, fout)
+
+if debugCommunication:
+    channel = MIMChannel(channel)
+
+Server.crate_instance(channel)
 StartupMessage(uri).send()
 
 import plugin
-
-
 
 adapter=Adapter('adapter')
 plugin.pluginMain(adapter)
