@@ -1,6 +1,7 @@
 #import paths
 from ..implementation import Message
 from ..implementation import AdvProperty
+from ..implementation.communication import Server
 #for $depend in $root.referenced
 #if $depend.typeName == 'Exception'
 from $paths.getImportPath($depend, $root) import $depend.identifier.upperCamelCase

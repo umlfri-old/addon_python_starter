@@ -11,8 +11,6 @@
     #end for
     
     <template path="templates/factory.py.tmpl" output="org/umlfri/api/implementation/factory.py" root="$root.fqn"/>
-    <file path="implementation/__init__.py" output="org/umlfri/api/implementation/__init__.py"/>
-    <file path="implementation/exceptions.py" output="org/umlfri/api/implementation/exceptions.py"/>
-    <file path="implementation/message.py" output="org/umlfri/api/implementation/message.py"/>
-    <file path="implementation/advProperty.py" output="org/umlfri/api/implementation/advProperty.py"/>
+    <directory path="implementation" output="org/umlfri/api/implementation" glob="*.py"/>
+    <directory path="mainLoops" output="org/umlfri/api/mainLoops" glob="*.py"/>
 </library>
