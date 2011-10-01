@@ -1,4 +1,4 @@
-from .exceptions import ReadOnlyExceptions, NonIterableException
+from .exceptions import ReadOnlyException, NonIterableException
 
 class AdvPropertyIndexer(object):
     def __init__(self, name, documentation, instance, getter, setter, iterator):
@@ -13,7 +13,7 @@ class AdvPropertyIndexer(object):
     def __getitem__(self, index):
         return self.__getter(self.__instance, index)
     
-    def __setitem__(self, index, value)
+    def __setitem__(self, index, value):
         if self.__setter is None:
             raise ReadOnlyException()
         else:
