@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<AddOn xmlns="http://umlfri.org/xmlschema/addon.xsd">
+    <Identity uri="urn:umlfri.org:starters:python" />
+    
+    <FriendlyName name="Python starter plugin" version="0.1" />
+    <Author>
+        <Name name="Jan Janech" />
+        <Homepage url="http://umlfri.org" />
+        
+        <CommonLicense name="MIT" />
+    </Author>
+    
+    <Icon path="icons/python-logo.png" />
+    
+    <Description>
+        Python starter plugin.
+    </Description>
+    
+    <Plugin>
+        <Patch module="starter" />
+    </Plugin>
+</AddOn>
