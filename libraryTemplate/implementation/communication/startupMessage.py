@@ -9,7 +9,7 @@ class StartupMessage(object):
         self.__uri = uri
     
     def create_message(self):
-        return 'plugin', 'init', (), {'uri': self.__uri}
+        return 'plugin', 'connect', (), {'uri': self.__uri}
     
     def send(self, server):
         server.send_command(self)
