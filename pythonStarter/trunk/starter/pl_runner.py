@@ -20,7 +20,7 @@ sys.path.insert(0, os.environ['UMLFRI_PATH'])
 
 debugCommunication = 'UMLFRI_PLUGIN_DEBUG' in os.environ
 
-from org.umlfri.api.implementation import Server, FileChannel, MIMChannel, StartupMessage
+from org.umlfri.api.implementation import Server, FileChannel, MIMChannel, StartupMessage, InitializedMessage
 from org.umlfri.api.base import Adapter
 
 fin = os.fdopen(pin, 'r')
@@ -38,4 +38,7 @@ import plugin
 
 adapter=Adapter(server, 'adapter')
 plugin.pluginMain(adapter)
+
+InitializedMessage().send(server)
+
 server.main_loop()
