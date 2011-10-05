@@ -1,4 +1,5 @@
 from lib.config import config
+from lib.Distconfig import IS_FROZEN
 from lib.Depend.sysplatform import getPythonVersion
 from lib.Addons.Plugin.Communication.Medium import CPipeMedium
 from multiprocessing.forking import duplicate
@@ -9,11 +10,15 @@ import sys
 import subprocess
 import signal
 
-ROOT_PATH = os.path.dirname(os.path.dirname(__file__))
+ADDON_ROOT_PATH = os.path.dirname(os.path.dirname(__file__))
 
 class CPythonStarter(object):
-    __pl_runner = (sys.executable, os.path.join(ROOT_PATH, 'starter', 'pl_runner.py'))
-    __lib_root = os.path.join(ROOT_PATH, 'library')
+    if IS_FROZEN:
+        __pl_runner = (os.path.join(ADDON_ROOT_PATH, 'starter', 'pl_runner.exe'), )
+        __lib_root = None
+    else:
+        __pl_runner = (sys.executable, os.path.join(ADDON_ROOT_PATH, 'starter', 'pl_runner.py'))
+        __lib_root = os.path.join(ADDON_ROOT_PATH, 'library')
     
     def __init__(self, plugin):
         self.__plugin = plugin
