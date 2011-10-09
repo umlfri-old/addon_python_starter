@@ -1,9 +1,9 @@
     def ${method.identifier.lowerUnderscoreSeparated}(self#slurp
 #for $parameter in $method.childrenOfType('InterfaceMethodParameter')
 #if $parameter.type == '*'
-, *$parameter.identifier.lowerUnderscoreSeparated#slurp
+, *$parameter.identifier.lowerCase#slurp
 #else
-, $parameter.identifier.lowerUnderscoreSeparated#slurp
+, $parameter.identifier.lowerCase#slurp
 #if not $parameter.required
  = $parameter.default.__repr__()#slurp
 #end if
@@ -19,11 +19,11 @@
             Message(self.__id, '$method.apiName') \
 #for $parameter in $method.parameters
 #if $parameter.type == '*'
-                .args_parameter('$parameter.apiName', $parameter.identifier.lowerUnderscoreSeparated) \
+                .args_parameter('$parameter.apiName', $parameter.identifier.lowerCase) \
 #else if $parameter.type.typeName == 'PrimitiveType'
-                .${parameter.type.name}_parameter('$parameter.apiName', $parameter.identifier.lowerUnderscoreSeparated) \
+                .${parameter.type.name}_parameter('$parameter.apiName', $parameter.identifier.lowerCase) \
 #else
-                .object_parameter('$parameter.apiName', $parameter.identifier.lowerUnderscoreSeparated) \
+                .object_parameter('$parameter.apiName', $parameter.identifier.lowerCase) \
 #end if
 #end for
 #if $method.async
