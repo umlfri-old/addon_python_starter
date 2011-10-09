@@ -33,7 +33,7 @@ class Encoding(object):
         return 'True' if value else 'False'
 
     def __encode_object(self, value):
-        return '#%s::%s' % (value.__id__, value.__interface__)
+        return '#%s' % value.__id__
 
     def __encode_string(self, value):
         if isinstance(value, str):
