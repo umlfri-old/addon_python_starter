@@ -1,5 +1,9 @@
 from .exceptions import ReadOnlyException, NonIterableException
 
+class FakeProperty(property):
+    def __init__(self, doc):
+        self.__doc__ = doc
+
 class AdvPropertyIndexer(object):
     def __init__(self, name, documentation, instance, getter, setter, iterator):
         self.__name__ = name
@@ -50,7 +54,7 @@ class AdvProperty(object):
     
     def __get__(self, instance, cls = None):
         if instance is None:
-            return self
+            return FakeProperty(doc = self.__doc__)
         
         if self.__hasIndex:
             return AdvPropertyIndexer(self.__name__, self.__doc__, instance, self.__getter, self.__setter, self.__iterator)
