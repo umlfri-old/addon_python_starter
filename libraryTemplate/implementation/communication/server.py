@@ -93,4 +93,4 @@ class Server(object):
             self.__mainLoop.quit()
         elif cmd == RESP_CALLBACK:
             callback = self.__encoding.decode(('callback', params['callback']))
-            self.__mainLoop.call(callback, params['args'])
+            self.__mainLoop.call(callback, *params['args'])
