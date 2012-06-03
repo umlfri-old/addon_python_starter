@@ -42,7 +42,10 @@ class Server(object):
     
     def __serve(self):
         while True:
-            line = self.__channel.read_line()
+            try:
+                line = self.__channel.read_line()
+            except ValueError:
+                thread.interrupt_main()
             
             if not line:
                 continue

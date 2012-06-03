@@ -41,4 +41,7 @@ plugin.pluginMain(adapter)
 
 InitializedMessage().send(server)
 
-server.main_loop()
+try:
+    server.main_loop()
+except KeyboardInterrupt:
+    pass
