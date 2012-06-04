@@ -9,6 +9,7 @@ class Message(object):
         self.__params = {}
         self.__sendEvent = Event()
         self.__result = None
+        self.__interrupted = False
     
     def boolean_parameter(self, name, value):
         self.__params[name] = bool(value)
@@ -55,6 +56,8 @@ class Message(object):
     def send(self, server):
         server.send_command(self)
         self.__sendEvent.wait()
+        if self.__interrupted:
+            raise ValueError('Communication with server was closed')
         return MessageResult(*self.__result)
     
     def send_async(self, server):
@@ -65,4 +68,8 @@ class Message(object):
     
     def accept(self, cmd, params):
         self.__result = cmd, params
+        self.__sendEvent.set()
+    
+    def interrupt(self):
+        self.__interrupted = True
         self.__sendEvent.set()
