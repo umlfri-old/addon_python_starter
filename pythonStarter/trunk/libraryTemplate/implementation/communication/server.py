@@ -8,6 +8,7 @@ from threading import Lock, Event
 class Server(object):
     def __init__(self, channel):
         self.__channel = channel
+        self.__closed = False
         
         self.__mainLoop = DefaultMainLoop()
         self.__encoding = Encoding(self)
@@ -27,6 +28,9 @@ class Server(object):
         self.__mainLoop.main_loop()
             
     def send_command(self, message, async = False):
+        if self.__closed:
+            raise ValueError('Communication with server was closed')
+        
         with self.__messageLock:
             self.__messagesId += 1
             id = self.__messagesId
@@ -45,7 +49,20 @@ class Server(object):
             try:
                 line = self.__channel.read_line()
             except ValueError:
-                thread.interrupt_main()
+                try:
+                    self.__mainLoop.quit()
+                except:
+                    pass
+                
+                for msg in self.__messages.values():
+                    try:
+                        msg.interrupt()
+                    except:
+                        pass
+                
+                self.__closed = True
+                
+                break
             
             if not line:
                 continue
