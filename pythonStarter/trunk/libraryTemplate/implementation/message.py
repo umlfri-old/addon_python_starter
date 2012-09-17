@@ -53,6 +53,10 @@ class Message(object):
         self.__params[name] = value
         return self
     
+    def args_parameter(self, name, values):
+        self.__params[name] = tuple(values)
+        return self
+    
     def send(self, server):
         server.send_command(self)
         self.__sendEvent.wait()
