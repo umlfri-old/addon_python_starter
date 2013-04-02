@@ -10,6 +10,11 @@ import sys
 import subprocess
 import signal
 
+try:
+    import updateLib
+except:
+    updateLib = None
+
 ADDON_ROOT_PATH = os.path.dirname(os.path.dirname(__file__))
 
 class CPythonStarter(object):
@@ -24,6 +29,9 @@ class CPythonStarter(object):
         self.__plugin = plugin
     
     def Start(self):
+        if updateLib is not None:
+            updateLib.update()
+        
         path = self.__plugin.GetPath()
         uri = self.__plugin.GetUri()
         env = os.environ.copy()
