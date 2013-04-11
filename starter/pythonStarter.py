@@ -15,6 +15,14 @@ try:
 except:
     updateLib = None
 
+try:
+    from exceptions import WindowsError
+except ImportError:
+    class WindowsError(Exception):
+        """
+        Never occuring exception. WindowsError replacement for non-windows system.
+        """
+
 ADDON_ROOT_PATH = os.path.dirname(os.path.dirname(__file__))
 
 class CPythonStarter(object):
@@ -29,9 +37,6 @@ class CPythonStarter(object):
         self.__plugin = plugin
     
     def Start(self):
-        if updateLib is not None:
-            updateLib.update()
-        
         path = self.__plugin.GetPath()
         uri = self.__plugin.GetUri()
         env = os.environ.copy()
