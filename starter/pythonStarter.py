@@ -80,13 +80,22 @@ class CPythonStarter(object):
     
     def Terminate(self):
         if os.name == 'nt':
-            self.__process.terminate()
+            try:
+                self.__process.terminate()
+            except WindowsError:
+                if self.__process.poll() is None:
+                    raise
+
         else:
             os.kill(self.__pid, signal.SIGTERM)
         
     def Kill(self):
         if os.name == 'nt':
-            self.__process.kill()
+            try:
+                self.__process.kill()
+            except WindowsError:
+                if self.__process.poll() is None:
+                    raise
         else:
             os.kill(self.__pid, signal.SIGKILL)
     
