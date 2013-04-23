@@ -1,6 +1,4 @@
-from lib.config import config
 from lib.Distconfig import IS_FROZEN
-from lib.Depend.sysplatform import getPythonVersion
 from lib.Addons.Plugin.Communication.Medium import CPipeMedium
 from multiprocessing.forking import duplicate
 
@@ -9,11 +7,6 @@ import os.path
 import sys
 import subprocess
 import signal
-
-try:
-    import updateLib
-except:
-    updateLib = None
 
 try:
     from exceptions import WindowsError

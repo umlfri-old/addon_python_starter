@@ -4,11 +4,11 @@ import os.path
 import subprocess
 import sys
 import shutil
-from lib.Distconfig import IS_FROZEN
+from lib.Distconfig import IS_FROZEN, ROOT
 
 templatePath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "libraryTemplate", "index.xml.tmpl"))
 libraryPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "library"))
-mkaddonLib = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "share", "tools", "mkaddonlib", "main.py")
+mkaddonLib = os.path.join(ROOT, "share", "tools", "mkaddonlib", "main.py")
 
 if IS_FROZEN:
     raise  Exception("Cannot update lib in the frozen environment")
