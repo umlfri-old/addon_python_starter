@@ -1,8 +1,15 @@
 from .exceptions import ReadOnlyException, NonIterableException
 
+# hack for correct help in IPython
 class FakeProperty(property):
     def __init__(self, doc):
         self.__doc__ = doc
+    
+    def __repr__(self):
+        return '<property object>'
+
+FakeProperty.__name__ = property.__name__
+FakeProperty.__module__ = property.__module__
 
 class AdvPropertyIndexer(object):
     def __init__(self, name, documentation, instance, getter, setter, iterator):
