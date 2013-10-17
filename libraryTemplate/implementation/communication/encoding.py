@@ -7,6 +7,7 @@ from ..factory import Factory
 class Encoding(object):
     def __init__(self, server):
         self.__callbacks = {}
+        self.__callbackIds = {}
         self.__callbackLock = threading.Lock()
         self.__callbackId = 0
         self.__factory = Factory(server)
@@ -49,8 +50,11 @@ class Encoding(object):
 
     def __encode_callback(self, value):
         with self.__callbackLock:
+            if id(value) in self.__callbackIds:
+                return str(self.__callbackIds[id(value)])
             self.__callbackId += 1
             self.__callbacks[self.__callbackId] = value
+            self.__callbackIds[id(value)] = self.__callbackId
             return str(self.__callbackId)
 
     def __encode_none(self, value):
