@@ -40,7 +40,7 @@ class Encoding(object):
         if isinstance(value, str):
             return base64.b64encode(value + '\0')
         elif isinstance(value, unicode):
-            return base64.b64encode(value + '\x01')
+            return base64.b64encode((value + '\x01').encode("utf_8"))
 
     def __encode_int(self, value):
         return str(value)
@@ -94,7 +94,7 @@ class Encoding(object):
         if value[-1] == '\0':
             return value[:-1]
         else:
-            return unicode(value[:-1])
+            return unicode(value[:-1], "utf_8")
 
     def __decode_int(self, value):
         return int(value)
