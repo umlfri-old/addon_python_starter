@@ -1,4 +1,4 @@
-from lib.Addons.Plugin.Starter import starters
+from lib.Addons.Plugin.Starter import STARTERS
 from .pythonStarter import CPythonStarter
 
 try:
@@ -18,14 +18,14 @@ class CPlugin(object):
             updateLib.update()
         
         for name in self.__identifiers:
-            if name in starters:
-                self.__oldValues[name] = starters[name]
-            starters[name] = CPythonStarter
+            if name in STARTERS:
+                self.__oldValues[name] = STARTERS[name]
+            STARTERS[name] = CPythonStarter
     
     def CanStop(self):
         return True
     
     def Stop(self):
         for name in self.__identifiers:
-            del starters[name]
-        starters.update(self.__oldValues)
+            del STARTERS[name]
+        STARTERS.update(self.__oldValues)
