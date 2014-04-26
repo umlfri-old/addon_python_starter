@@ -1,0 +1,67 @@
+#import paths
+from ..implementation import Message
+from ..implementation import AdvProperty
+from ..implementation.communication import Server
+#for $depend in $root.referenced
+#if $depend.typeName == 'Exception'
+from $paths.getImportPath($depend, $root) import $depend.identifier.upperCamelCase
+#end if
+#end for
+#if $root.base
+from $paths.getImportPath($root.base, $root) import $root.base.identifier.upperCamelCase
+#end if
+
+#def createMethod($meth, $incDoc = False)
+#set global $method = $meth
+#set global $includeDoc = $incDoc
+#include "interfaceMethod.py.tmpl"
+#end def
+class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifier.upperCamelCase else 'object' #):
+#if $root.documentation
+    """
+    $root.documentation.indent(4)
+    """
+    
+#end if
+    def __init__(self, server, id):
+#if $root.base
+        ${root.base.identifier.upperCamelCase}.__init__(self, server, id)
+#end if
+        self.__server = server
+        self.__id = id
+    
+    @property
+    def __interface__(self):
+        return "$root.apiName"
+    
+    @property
+    def __id__(self):
+        return self.__id
+#for $method in $root.childrenOfType('InterfaceMethod')
+    
+$createMethod($method, True)
+#end for
+#for $property in $root.childrenOfType('InterfaceProperty')
+    
+    $property.identifier.lowerUnderscoreSeparated = AdvProperty('$property.identifier.lowerUnderscoreSeparated', #if $property.index then 'True' else 'False' #, $property.documentation.__repr__())
+#for $method in $property.childrenOfType('InterfacePropertyGetter')
+    
+    @${property.identifier.lowerUnderscoreSeparated}.getter
+$createMethod($method.createMethod())
+#end for
+#for $method in $property.childrenOfType('InterfacePropertySetter')
+    
+    @${property.identifier.lowerUnderscoreSeparated}.setter
+$createMethod($method.createMethod())
+#end for
+#for $method in $property.childrenOfType('InterfacePropertyIterator')
+    
+    @${property.identifier.lowerUnderscoreSeparated}.iterator
+$createMethod($method.createMethod())
+#end for
+#end for
+#if $root.fqn == 'org::umlfri::api::base::Adapter':
+#include "appends/adapter.py.tmpl"
+#elif $root.fqn == 'org::umlfri::api::base::Transaction':
+#include "appends/transaction.py.tmpl"
+#end if

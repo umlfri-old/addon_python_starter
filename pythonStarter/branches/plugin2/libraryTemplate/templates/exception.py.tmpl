@@ -1,0 +1,32 @@
+class ${root.identifier.upperCamelCase}(#if $root.base then $root.base.identifier.upperCamelCase else 'Exception' #):
+#if $root.documentation
+    """
+    $root.documentation.indent(4)
+    """
+    
+#end if
+    def __init__(self, params):
+        self.__params = params
+#for $property in $root.childrenOfType('ExceptionProperty')
+    
+    @property
+    def ${property.identifier.lowerUnderscoreSeparated}(self):
+#if $property.documentation
+        """
+        $property.documentation.indent(8)
+        """
+#end if
+#if $property.iterable
+        for value in self.__params[$property.index]:
+            yield value
+#else
+        return self.__params[$property.index]
+#end if
+#end for
+
+    @property
+    def traceback(self):
+        """
+        Traceback for the current exception
+        """
+        return self.__params[-1]

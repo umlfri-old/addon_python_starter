@@ -1,0 +1,16 @@
+#import paths
+<library>
+    #for $element in $root.descendants
+        #if $element.typeName == 'Namespace'
+            <template path="templates/__init__.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
+        #elif $element.typeName == 'Interface'
+            <template path="templates/interface.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
+        #elif $element.typeName == 'Exception'
+            <template path="templates/exception.py.tmpl" output="$paths.getPath($element)" root="$element.fqn"/>
+        #end if
+    #end for
+    
+    <template path="templates/factory.py.tmpl" output="org/umlfri/api/implementation/factory.py" root="$root.fqn"/>
+    <directory path="implementation" output="org/umlfri/api/implementation" glob="*.py"/>
+    <directory path="mainLoops" output="org/umlfri/api/mainLoops" glob="*.py"/>
+</library>

@@ -1,0 +1,34 @@
+from weakref import WeakValueDictionary
+
+#import paths
+
+class Factory(object):
+    def __init__(self, server):
+#for $element in $root.descendants
+#if $element.typeName == 'Interface' and not $element.isAbstract
+        from ..${element.namespace.identifier.lowerCamelCase}.${element.identifier.lowerCamelCase} import ${element.identifier.upperCamelCase}
+#end if
+#end for
+        
+        self.__types = {
+#for $element in $root.descendants
+#if $element.typeName == 'Interface' and not $element.isAbstract
+            '${element.apiName}': ${element.identifier.upperCamelCase},
+#end if
+#end for
+        }
+        self.__objects = WeakValueDictionary()
+        self.__server = server
+    
+    def __create_instance(self, type, id):
+        return self.__types[type](self.__server, id)
+    
+    def get_instance(self, type, id):
+        key = (type, id)
+        if key in self.__objects:
+            value = self.__objects[key]
+        else:
+            value = self.__create_instance(type, id)
+            self.__objects[key] = value
+        
+        return value
